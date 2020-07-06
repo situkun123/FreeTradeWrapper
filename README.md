@@ -13,3 +13,14 @@ You can also refer to this awsome article on medium: https://towardsdatascience.
 These information can be found in the following google sheet:
 https://docs.google.com/spreadsheets/d/14Ep-CmoqWxrMU8HshxthRcdRW8IsXvh3n2-ZHVCzqzQ/edit#gid=1855920257
 
+## Basic Usage
+```python
+import sys
+sys.path.append('your_directory_of_freetrade_class')
+from FreeTrade import FreeTrade
+
+sess = FreeTrade(your_api_key) # initialize the session with your finKi API key
+
+sess.get_bid_price('GOOGL') # get bid price of Alphabet by using the trading symbol for it
+sess.get_bid_price('US02079K3059') # get bid price of Alphabet by using isin reference number
+```
