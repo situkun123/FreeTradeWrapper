@@ -1,6 +1,7 @@
 import gspread
 import pandas as pd
 import requests
+import json
 
 class FreeTrade(object):
     # class method variables/properties
@@ -9,6 +10,9 @@ class FreeTrade(object):
         self.con = gspread.service_account(gsheet_json)
         self.lookup_df = self.all_symbol_info()
         self.API_key = API_key
+        fx = self._fx()
+        self.GBP_USD = fx[0]
+        self.USD_GBP = fx[1]
 
     def _check_sym_isin(self, x):
         '''Identify if the input is a symbol or isin'''
@@ -16,6 +20,17 @@ class FreeTrade(object):
             return self.find_isin(x)
         else:
             return x
+
+
+    def _fx(self):
+        '''The fx is get from European central bank on a daily basis'''
+        data = json.loads(requests.get('https://api.exchangeratesapi.io/latest?symbols=USD,GBP').text)
+        date = data['date']
+        GBP_USD = data['rates']['USD'] / data['rates']['GBP']
+        USD_GBP = data['rates']['GBP'] / data['rates']['USD']
+        return [GBP_USD, USD_GBP]
+        # print(f'The exchange rate of {date} from European Central Bank')
+
 
     def all_symbol_info(self):
         data = self.con.open_by_key('14Ep-CmoqWxrMU8HshxthRcdRW8IsXvh3n2-ZHVCzqzQ').get_worksheet(0).get_all_values()
@@ -96,4 +111,22 @@ class FreeTrade(object):
         currency = self.get_currency(input1)
         symbol = self.get_symbol(input1)
 
-        return {'isin': input1, 'Symbol': symbol, 'bid':bid, 'ask':ask, 'currency':currency}
+        return {'isin': input1, 'symbol': symbol, 'bid':bid, 'ask':ask, 'currency':currency}
+
+    def price_comparison(self, input1, target_price):
+        '''The return result is GBP'''
+        input1 = self._check_sym_isin(input1)
+        symbol = self.get_symbol(input1)
+        current_price = self.get_ask_price(input1)
+        currency = self.get_currency(input1)
+        if currency== 'GBX':
+            current_price = current_price / 100
+        elif currency== 'USD':
+            current_price = current_price / self.GBP_USD
+        else:
+            pass
+        if target_price >= current_price:
+            reached = 'Yes'
+        else:
+            reached =  'No'
+        return {'symbol': symbol, 'current price': current_price,  'target_price':target_price, 'reached':reached }
