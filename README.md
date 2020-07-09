@@ -1,5 +1,5 @@
 # FreeTradeWrapper
-A wrapper for finKi API use for requesting data points for stocks symbol in Free Trade App
+A wrapper for finKi API use for requesting data points for stocks symbol in Free Trade App, and the exchange rate used in the wrapper is coming from https://exchangeratesapi.io/
 
 ## Finki API Key
 In order to to obtain API key, you will need to go on https://finki.io/finkiAPI.html to request for API key.
