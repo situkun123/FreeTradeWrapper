@@ -23,7 +23,7 @@ class FreeTrade(object):
 
 
     def _fx(self):
-        '''The fx is get from European central bank on a daily basis'''
+        '''The fx is get from European central bank on a daily basis from https://exchangeratesapi.io/'''
         data = json.loads(requests.get('https://api.exchangeratesapi.io/latest?symbols=USD,GBP').text)
         date = data['date']
         GBP_USD = data['rates']['USD'] / data['rates']['GBP']
